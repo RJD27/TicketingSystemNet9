@@ -1,25 +1,21 @@
-﻿using Domain;
+﻿using Application.Tickets.Queries;
+using Domain;
+using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using Persistence;
 
 namespace API.Controllers;
 
-public class TicketsController(AppDbContext context) : BaseApiController
+public class TicketsController(IMediator mediator) : BaseApiController
 {
     [HttpGet]
     public async Task<ActionResult<List<Ticket>>> GetTickets()
     {
-        return await context.Tickets.ToListAsync();
+        return await mediator.Send(new GetTicketList.Query());
     }
 
     [HttpGet("{id}")]
     public async Task<ActionResult<Ticket>> GetTicketDetail(string id)
     {
-        var ticket = await context.Tickets.FindAsync(id);
-        
-        if (ticket == null) return NotFound();
-        
-        return ticket;
+        return await mediator.Send(new GetTicketDetails.Query { Id = id });
     }
 }
