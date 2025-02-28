@@ -1,3 +1,4 @@
+using Application.Core;
 using Application.Tickets.Queries;
 using Microsoft.EntityFrameworkCore;
 using Persistence;
@@ -14,6 +15,7 @@ builder.Services.AddDbContext<AppDbContext>(opt =>
 builder.Services.AddCors();
 builder.Services.AddMediatR(x => 
     x.RegisterServicesFromAssemblyContaining<GetTicketList.Handler>()); // specify name of handler 
+builder.Services.AddAutoMapper(typeof(MappingProfiles).Assembly);
 
 var app = builder.Build();
 
