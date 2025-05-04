@@ -1,5 +1,5 @@
-import {Grid2, List} from "@mui/material";
-import TicketList from "./TicketList.tsx";
+import {Grid2, Modal} from "@mui/material";
+import TicketTable from "./TicketTable.tsx";
 import TicketDetail from "../details/TicketDetail.tsx";
 
 type Props = {
@@ -12,22 +12,19 @@ type Props = {
 export default function TicketDashboard({tickets, cancelSelectTicket, selectTicket, 
                                             selectedTicket}: Props) {
     return (
-        <Grid2 container spacing={3}>
-            <Grid2 size={7}>
-                <List>
-                    <TicketList 
-                        tickets={tickets}
-                        selectTicket={selectTicket}
-                    />
-                </List>
-            </Grid2>
-            <Grid2 size={5}>
-                {selectedTicket && <TicketDetail 
-                    ticket={selectedTicket} 
-                    cancelSelectTicket={cancelSelectTicket}
-                />
-                }
-            </Grid2>
-        </Grid2>
+        <>
+            <TicketTable tickets={tickets} selectTicket={selectTicket}/>
+            <Modal
+                open={!!selectedTicket}
+                onClose={cancelSelectTicket}
+                sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+            >
+                <Grid2 size={5}>
+                    {selectedTicket && (
+                        <TicketDetail ticket={selectedTicket} cancelSelectTicket={cancelSelectTicket} />
+                    )}
+                </Grid2>
+            </Modal>
+        </>
     )
 }
