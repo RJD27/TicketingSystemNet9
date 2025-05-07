@@ -24,6 +24,7 @@ import { visuallyHidden } from "@mui/utils";
 type Props = {
     tickets: Ticket[];
     selectTicket: (id: string) => void;
+    deleteTicket: (id: string) => void;
 };
 
 type Order = "asc" | "desc";
@@ -119,10 +120,11 @@ function EnhancedTableHead(props: EnhancedTableProps) {
 
 interface EnhancedTableToolbarProps {
     numSelected: number;
+    onDeleteSelected: () => void;
 }
 
 function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
-    const { numSelected } = props;
+    const { numSelected, onDeleteSelected } = props;
     return (
         <Toolbar
             sx={[
@@ -147,8 +149,8 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
             )}
             {numSelected > 0 ? (
                 <Tooltip title="Delete">
-                    <IconButton>
-                        <DeleteIcon />
+                    <IconButton onClick={onDeleteSelected}>
+                        <DeleteIcon color='error'/>
                     </IconButton>
                 </Tooltip>
             ) : (
@@ -158,7 +160,7 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
     );
 }
 
-export default function TicketTable({ tickets, selectTicket }: Props) {
+export default function TicketTable({ tickets, selectTicket, deleteTicket }: Props) {
     const [order, setOrder] = React.useState<Order>("desc");
     const [orderBy, setOrderBy] = React.useState<keyof Ticket>("date");
     const [selected, setSelected] = React.useState<readonly string[]>([]);
@@ -225,7 +227,13 @@ export default function TicketTable({ tickets, selectTicket }: Props) {
     return (
         <Box sx={{ width: "100%" }}>
             <Paper sx={{ width: "100%", mb: 2 }}>
-                <EnhancedTableToolbar numSelected={selected.length} />
+                <EnhancedTableToolbar 
+                    numSelected={selected.length}
+                    onDeleteSelected={() => {
+                        selected.forEach((id) => deleteTicket(id));
+                        setSelected([]);
+                    }}
+                />
                 <TableContainer>
                     <Table sx={{ minWidth: 750 }} aria-labelledby="tableTitle" size={"small"}>
                         <EnhancedTableHead
