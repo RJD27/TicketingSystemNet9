@@ -11,8 +11,6 @@ type Props = {
     openForm: (id:string) => void;
     closeForm: () => void;
     editMode: boolean;
-    submitForm: (ticket: Ticket) => void;
-    deleteTicket: (id: string) => void;
 }
 
 export default function TicketDashboard({tickets, cancelSelectTicket, 
@@ -20,23 +18,19 @@ export default function TicketDashboard({tickets, cancelSelectTicket,
                                             selectedTicket, 
                                             openForm, 
                                             closeForm, 
-                                            editMode,
-                                            submitForm,
-                                            deleteTicket,}
+                                            editMode,}
                                         : Props) {
     return (
         <>
             <TicketTable 
                 tickets={tickets} 
                 selectTicket={selectTicket}
-                deleteTicket={deleteTicket}
             />
             <Dialog open={editMode} onClose={closeForm}>
                 <Grid2 size={5}>
                     <TicketForm 
                         closeForm={closeForm} 
                         ticket={selectedTicket} 
-                        submitForm={submitForm}
                     />
                 </Grid2>
             </Dialog>
@@ -44,10 +38,9 @@ export default function TicketDashboard({tickets, cancelSelectTicket,
                 <Grid2 size={5}>
                     {selectedTicket && !editMode &&
                         <TicketDetail 
-                            ticket={selectedTicket} 
+                            selectedTicket={selectedTicket} 
                             cancelSelectTicket={cancelSelectTicket} 
                             openForm={openForm}
-                            deleteTicket={deleteTicket}
                         />}
                 </Grid2>
             </Dialog>

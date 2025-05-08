@@ -1,13 +1,18 @@
 import {Box, Button, Card, CardActions, CardContent, Chip, Typography} from "@mui/material";
+import {useTickets} from "../../../lib/hooks/useTickets.ts";
 
 type Props = {
-    ticket: Ticket;
+    selectedTicket: Ticket;
     cancelSelectTicket: () => void;
     openForm: (id: string) => void;
-    deleteTicket: (id: string) => void;
 }
 
-export default function TicketDetails({ticket, cancelSelectTicket, openForm, deleteTicket}: Props) {
+export default function TicketDetails({selectedTicket, cancelSelectTicket, openForm}: Props) {
+    const {tickets, deleteTicket} = useTickets();
+    const ticket = tickets?.find((x) => x.id === selectedTicket.id);
+    
+    if (!ticket) return <Typography>Loading...</Typography>
+    
     return (
         <Card sx={{borderRadius: 3}}>
             <CardContent>
@@ -21,7 +26,10 @@ export default function TicketDetails({ticket, cancelSelectTicket, openForm, del
                 <Box display='flex' gap={3}>
                     <Button onClick={()=>openForm(ticket.id)} size="medium"
                             variant="contained">Edit</Button>
-                    <Button onClick={()=>{deleteTicket(ticket.id); cancelSelectTicket();}} color='error' size="medium"
+                    <Button onClick={()=>{deleteTicket.mutate(ticket.id); cancelSelectTicket();}} 
+                            disabled={deleteTicket.isPending}
+                            color='error' 
+                            size="medium"
                             variant="contained">Delete</Button>
                     <Button onClick={cancelSelectTicket} color='warning' size="medium"
                             variant="contained">Cancel</Button>

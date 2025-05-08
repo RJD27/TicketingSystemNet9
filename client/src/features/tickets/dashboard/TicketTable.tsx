@@ -20,11 +20,11 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { visuallyHidden } from "@mui/utils";
+import {useTickets} from "../../../lib/hooks/useTickets.ts";
 
 type Props = {
     tickets: Ticket[];
     selectTicket: (id: string) => void;
-    deleteTicket: (id: string) => void;
 };
 
 type Order = "asc" | "desc";
@@ -160,7 +160,8 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
     );
 }
 
-export default function TicketTable({ tickets, selectTicket, deleteTicket }: Props) {
+export default function TicketTable({ tickets, selectTicket}: Props) {
+    const {deleteTicket} = useTickets();
     const [order, setOrder] = React.useState<Order>("desc");
     const [orderBy, setOrderBy] = React.useState<keyof Ticket>("date");
     const [selected, setSelected] = React.useState<readonly string[]>([]);
@@ -230,7 +231,7 @@ export default function TicketTable({ tickets, selectTicket, deleteTicket }: Pro
                 <EnhancedTableToolbar 
                     numSelected={selected.length}
                     onDeleteSelected={() => {
-                        selected.forEach((id) => deleteTicket(id));
+                        selected.forEach((id) => deleteTicket.mutate(id));
                         setSelected([]);
                     }}
                 />
