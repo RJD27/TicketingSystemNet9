@@ -49,7 +49,10 @@ export default function TicketForm() {
                 />
                 <TextField name='priority' label='Priority' defaultValue={ticket?.priority} />
                 <Box display='flex' justifyContent='end' gap={3}>
-                    <Button color='inherit'>Cancel</Button>
+                    <Button 
+                        onClick={() => navigate('/tickets')} 
+                        color='inherit'
+                    >Cancel</Button>
                     <Button 
                         type="submit" 
                         color='success' 
