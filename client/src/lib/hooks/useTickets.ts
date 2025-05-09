@@ -1,7 +1,7 @@
 import {useMutation, useQuery, useQueryClient} from "@tanstack/react-query";
 import agent from "../api/agent";
 
-export const useTickets = () => {
+export const useTickets = (id?: string) => {
     const queryClient = useQueryClient();
     
     const {data: tickets, isPending} = useQuery({
@@ -11,6 +11,15 @@ export const useTickets = () => {
             return response.data;
         }
     });
+    
+    const {data: ticket, isLoading: isLoadingTicket} = useQuery({
+        queryKey: ['tickets', id],
+        queryFn: async () => {
+            const response = await agent.get<Ticket>(`/tickets/${id}`);
+            return response.data;
+        },
+        enabled: !!id
+    })
     
     const updateTicket = useMutation({
         mutationFn: async (ticket: Ticket) => {
@@ -25,7 +34,8 @@ export const useTickets = () => {
 
     const createTicket = useMutation({
         mutationFn: async (ticket: Ticket) => {
-            await agent.post(`/tickets`, ticket)
+            const response = await agent.post(`/tickets`, ticket)
+            return response.data;
         },
         onSuccess: async () => {
             await queryClient.invalidateQueries({
@@ -51,5 +61,7 @@ export const useTickets = () => {
         updateTicket,
         createTicket,
         deleteTicket,
+        ticket,
+        isLoadingTicket,
     }
 }

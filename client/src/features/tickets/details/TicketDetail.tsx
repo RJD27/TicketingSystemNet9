@@ -1,17 +1,15 @@
 import {Box, Button, Card, CardActions, CardContent, Chip, Typography} from "@mui/material";
+import {Link, useNavigate, useParams} from "react-router";
 import {useTickets} from "../../../lib/hooks/useTickets.ts";
 
-type Props = {
-    selectedTicket: Ticket;
-    cancelSelectTicket: () => void;
-    openForm: (id: string) => void;
-}
-
-export default function TicketDetails({selectedTicket, cancelSelectTicket, openForm}: Props) {
-    const {tickets, deleteTicket} = useTickets();
-    const ticket = tickets?.find((x) => x.id === selectedTicket.id);
+export default function TicketDetail() {
+    const navigate = useNavigate();
+    const {id} = useParams();
+    const {deleteTicket, ticket, isLoadingTicket} = useTickets(id);
     
-    if (!ticket) return <Typography>Loading...</Typography>
+    if (isLoadingTicket) return <Typography>Loading...</Typography>
+    
+    if (!ticket) return <Typography>Ticket not found</Typography>
     
     return (
         <Card sx={{borderRadius: 3}}>
@@ -24,14 +22,14 @@ export default function TicketDetails({selectedTicket, cancelSelectTicket, openF
             <CardActions sx={{display: 'flex', justifyContent: 'space-between', pb: 2}}>
                 <Chip label={ticket.priority} variant="outlined" />
                 <Box display='flex' gap={3}>
-                    <Button onClick={()=>openForm(ticket.id)} size="medium"
+                    <Button component={Link} to={`/manage/${ticket.id}`} size="medium"
                             variant="contained">Edit</Button>
-                    <Button onClick={()=>{deleteTicket.mutate(ticket.id); cancelSelectTicket();}} 
+                    <Button onClick={()=>deleteTicket.mutate(ticket.id)} 
                             disabled={deleteTicket.isPending}
                             color='error' 
                             size="medium"
                             variant="contained">Delete</Button>
-                    <Button onClick={cancelSelectTicket} color='warning' size="medium"
+                    <Button onClick={() => navigate('/tickets')} color='warning' size="medium" 
                             variant="contained">Cancel</Button>
                 </Box>
             </CardActions>
